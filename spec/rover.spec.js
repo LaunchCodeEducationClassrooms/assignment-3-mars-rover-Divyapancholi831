@@ -10,11 +10,39 @@ describe("Rover class", function() {
 
   // 7 tests here!
   it("constructor sets position and default values for mode and generatorWatts",function(){
-    let rover = new Rover(98382);
-    expect(rover.position).toEqual(98382);
-    expect(rover.mode).toEqual('NORMAL');
-    expect(rover.generatorWatts).toEqual(110);
-  
+    let testRover = new Rover(98382);
+    expect(testRover.position).toEqual(98382);
+    //expect(rover.mode).toEqual('NORMAL');
+    expect(testRover.generatorWatts).toEqual(110);
   });
+
+  it("response returned by receiveMessage contains name of message",function(){
+    let testMessage = new Message('test message with command',[]);
+    let testRover = new Rover(111);
+    expect(testRover.receiveMessage(testMessage).message).toEqual(testMessage.name);
+  });
+
+  it("response returned by receiveMessage includes two results if two commands are sent in the message",function(){
+    let testMessage=new Message('test message with command',[new Command('STATUS_CHECK',''),new Command('STATUS_CHECK','')]);
+    let testRover=new Rover(111);
+    expect(testRover.receiveMessage(testMessage).results.length).toEqual(testMessage.commands.length);
+  });
+
+  it("responds correctly to status check command",function(){
+    let testMessage=new Message('test message with command',[new Command('STATUS_CHECK','')])
+    let testRover= new Rover(111);
+    expect(testRover.receiveMessage(testMessage).results).toContain(jasmine.objectContaining({
+      roverStatus: {
+      mode: testRover.mode,
+      generatorWatts: testRover.generatorWatts,
+      position: testRover.position
+      }
+    }))
+  });
+
+  //it("responds correctly to mode change command",function(){
+
+  //});
+
 
 });
