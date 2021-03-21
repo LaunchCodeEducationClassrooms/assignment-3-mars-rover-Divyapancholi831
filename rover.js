@@ -10,12 +10,31 @@ class Rover {
       let results=[];
       for(const command of message.commands)
       {
+        if(command.commandType === "MOVE")
+        {
+          {
+            if(this.mode==='LOW_POWER')
+            {
+              results.push({completed: false});
+            }
+            else
+            {
+              this.position=command.value;
+              results.push({completed: true});
+            }
+          }
+        }
         if(command.commandType === 'STATUS_CHECK')
         {
         results.push({
           completed: true,
           roverStatus: {mode: this.mode, generatorWatts: this.generatorWatts, position: this.position}
         });
+        }
+        if(command.commandType === 'MODE_CHANGE')
+        {
+          this.mode=command.value;
+          results.push({completed : true});
         }
       }
       
@@ -26,3 +45,4 @@ class Rover {
 }
 
 module.exports = Rover;
+
